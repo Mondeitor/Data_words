@@ -455,7 +455,27 @@ void button_buscar_TextView(GtkWidget *widget, CCPTextBuffer *stuff)
 		//Obtenemos la longitud del array
         int sizeWordsV = strlen(wordsV);
     
-       
+    
+        //Con esto contabilizamos las palabras que vamos a buscar
+        int contWords = 0;
+        
+        
+        for(int i = 0; i <= sizeWordsV; i++)
+        {
+			if(wordsV[i] == ' ')
+			{
+				contWords++;
+			}
+			
+		}
+		
+		if(sizeText > 0)
+		{
+			contWords = contWords + 1;
+		}
+        
+        
+        
         
         //Para asegurarnos que se han introducido caracteres en el textview, sino se han inctroducido no se ejecutará el condiconal
         if(sizeWordsV >= 0 and sizeWordsV <= 5000)
@@ -1028,267 +1048,37 @@ void button_buscar_TextView(GtkWidget *widget, CCPTextBuffer *stuff)
        
        
             
-            //PARA PASAR EL CONTENIDO DE UN ARRAY CHAR UNIDIMENSIONAL A UN ARRAY CHAR BIDIMENSIONAL, OSEA LOS CARACTERES DEL ARRAY UNIDIMENSIONAL
-            //FORMAN PALABRAS Y ESTAN DELIMITADAS POR UN ESPACIO EN BLANCO, CON ESE ESPACIO EN BLANCO NO SERVIRÁ DE GUÍA PARA PASAR CADA PALABRA
-            //EN UNA POSICIÓN INDIVIDUAL DEL ARRAY BIDIMENSIONAL
-    
-            //Con esta sabremos cuantos espacios en blanco hay en el array palabras
-            char caracter = ' ';
-            int espacios = 0;
-	
-	
-            for(int i = 0; i < sizeWordsV; i++)
-            {
-                
-                if (wordsV[i] == caracter)
-                {
-		
-                       espacios++;	
-                }
-		
-            }
-	
             
-	
-            int longitud = espacios + 1; 
-	
-	
-            char words2[longitud][90];
-	
-	
-	
-            //CONOCER CUANTAS LETRAS HAY HASTA EL ESPACIO
-            int a, i;
-            int contadorLetras = 0;
-            bool hayEspacios = false;
-            int contEspacios = 0;
-            int posicion = 0;
-            int contador = 1;
-            int nuevaPos = 0;
-	
-	
-            //Recorremos el array
-            for(a = 0; a < sizeWordsV; a++)
-            {
-                //Para saber el número de caracteres que hay hasta llegar al espacio en blanco
-                for(i = posicion; i < sizeWordsV; i++)
-                {
-			
-                    if(isspace(wordsV[posicion]) == 0)
-                    {   
-				
-                        if(isspace(wordsV[posicion]) == 0)
-                        {
-					
-                            if(hayEspacios == false)
-                            {
-                                
-                                posicion++;
-						
-                                contadorLetras++;
-	
-                            }
-
-                        }
-
-                    }
-
-
-                    //Para que el contador deje de sumar en caso de que encuetre un espacio
-                    if(isspace(wordsV[posicion]) != 0)
-                    {
-                      
-                        hayEspacios = true;
-				
-                    }
-
-			
-			
-                }	
-		
-	
-                //Actualizamos a
-                if(contEspacios > 0)
-                {
-                    a = (a + contadorLetras);
-                }
-                else
-                {
-                    a = (a + contadorLetras+1);
-                }
-		
-		
-		
-                if(a > contadorLetras)
-                {
-                    
-                    int contadorPos = 0;
-                    int posicionActual = 0;
-			
-				
-                    for(int b = 0; b < contadorLetras; b++)
-                    {
-				
-                        if(contEspacios > 0)
-                        {
-                            contadorPos = nuevaPos;
-						
-                            words2[contEspacios][b] = wordsV[nuevaPos];
-				
-                        }
-                        else
-                        {
-                            
-                            words2[contEspacios][b] = wordsV[contadorPos];
-				
-                        }
-					
-				
-				
-                        nuevaPos++;
-                        contadorPos++;
-                        posicionActual++;
-					
-                        contador++;
-				
-                       
-				
-                        if(contEspacios == 0)
-                        {
-					
-                            if(contador > contadorLetras)
-                            {
-                                
-                                words2[contEspacios][b+1] = '\0';
-						
-                                contador = 0;
-                                contEspacios++;
-                                posicion = a;
-                                contadorLetras = 0;
-                                hayEspacios = false;
-					
-						
-                                if(contEspacios > 0)
-                                {
-                                    nuevaPos = a;
-						
-                                    posicionActual = a;
-		
-                                }
-					
-                            }
-                        }
-                        else if(contEspacios > 0)
-                        {
-                            if(contador >= contadorLetras)
-                            {
-						
-                                words2[contEspacios][b+1] = '\0';
-						
-                                contador = 0;
-                                contEspacios++;
-                                posicion = a;
-                                contadorLetras = 0;
-                                hayEspacios = false;
-					
-                                if(contEspacios > 0)
-                                {
-                                    nuevaPos = a;
-						
-                                    posicionActual = a;
-		
-                                }
-					
-                            }
-					
-                        }
-				
-                    }
-			
-                }
-		
-            }
-	
-	
-
-            int sizeParte1 = (sizeof((words2))/sizeof((words2[0])));
-	
-            
-    
-            //VERIFICAMOS LAS PALABRAS QUE METEMOS POR TEL TEXTVIEW PARA METERLO EN UN FICHERO Y COMPRABRLO CON EL OTRO FICHERO, ESAS PALABRAS VERIFICADAS APARECERAN
-            //EN EL TEXTVIEW DE LA PAGE 3
-            char wordsVerificado[5000];
-    
-            int sizeV = strlen(wordsV);
-            char espacio = ' ';
-    
-            
-			//Lo pasamos a un nuevo array
-            for(int i= 0; i < sizeV; i++)
-            {
-                wordsVerificado[i] = wordsV[i];
-            }
-    
-    
-			//Le añadimos salto de línea a cada palabra
-            for(int i = 0; i < sizeV; i++)
-            {
-                if(wordsVerificado[i] == espacio)
-                {
-                    wordsVerificado[i] = '\n';
-                }
-            }
-    
-    
-            wordsVerificado[sizeV] = '\0';
-    
-            int sizeWordsVerificado = strlen(wordsVerificado);
-    
-    
-    
-            //Lo pasamos al textview de la page 3
-            gtk_text_buffer_set_text (stuff->textBuffer3, wordsVerificado, sizeWordsVerificado); 
-    
-    
-    
-            //MOSTRAMOS EL LABEL DE LAS PALABRAS QUE BUSCO POR PANTALLA el valor de sizeParte1
+            //MOSTRAMOS EL LABEL DE LAS PALABRAS QUE BUSCO POR PANTALLA el valor de contWords
             short numDigitos;
             char sizePalabrasQueBusco[5000];
             int contador1 = 0;
             short cifra1, cifra2, cifra3;
             
-           
-            //En el caso de que no se ha escrito nada modificamos el valor de la variable
-            if(sizeText == 0)
-            {
-                sizeParte1 = 0;
-                
-            }
             
-          
   
-			//Calculamos cuantas cifras tendrá la variable sizeParte1
-            if (sizeParte1<10)
+			//Calculamos cuantas cifras tendrá la variable contWords
+            if (contWords<10)
             {
                 numDigitos = 1;
                 
             }
-            else if (sizeParte1<100)
+            else if (contWords<100)
             {
                 numDigitos = 2;
                 
             }
-            else if (sizeParte1<1000)
+            else if (contWords<1000)
             {
                 numDigitos = 3;
                 
             }
-            else if (sizeParte1<10000)
+            else if (contWords<10000)
             {
                 numDigitos = 4;
                 
             }
-            else if (sizeParte1 > 10000)
+            else if (contWords > 10000)
             {
                 //cout<<"Fuera de rango"<<endl;
             }
@@ -1301,52 +1091,52 @@ void button_buscar_TextView(GtkWidget *widget, CCPTextBuffer *stuff)
                 
                 if(numDigitos == 1)
                 {
-                    if(sizeParte1 == 0)
+                    if(contWords == 0)
                     {
                         sizePalabrasQueBusco[0] = '0';
                 
                     }
-                    else if(sizeParte1 == 1)
+                    else if(contWords == 1)
                     {
                         sizePalabrasQueBusco[0] = '1';
                 
                     }
-                    else if(sizeParte1 == 2)
+                    else if(contWords == 2)
                     {
                         sizePalabrasQueBusco[0] = '2';
                 
                     }
-                    else if(sizeParte1 == 3)
+                    else if(contWords == 3)
                     {
                         sizePalabrasQueBusco[0] = '3';
                 
                     }
-                    else if(sizeParte1 == 4)
+                    else if(contWords == 4)
                     {
                         sizePalabrasQueBusco[0] = '4';
                 
                     }
-                    else if(sizeParte1 == 5)
+                    else if(contWords == 5)
                     {
                         sizePalabrasQueBusco[0] = '5';
                 
                     }
-                    else if(sizeParte1 == 6)
+                    else if(contWords == 6)
                     {
                         sizePalabrasQueBusco[0] = '6';
                 
                     }
-                    else if(sizeParte1 == 7)
+                    else if(contWords == 7)
                     {
                         sizePalabrasQueBusco[0] = '7';
                 
                     }
-                    else if(sizeParte1 == 8)
+                    else if(contWords == 8)
                     {
                         sizePalabrasQueBusco[0] = '8';
                 
                     }
-                    else if(sizeParte1 == 9)
+                    else if(contWords == 9)
                     {
                         sizePalabrasQueBusco[0] = '9';
                 
@@ -1363,8 +1153,8 @@ void button_buscar_TextView(GtkWidget *widget, CCPTextBuffer *stuff)
             
                     if(a == numDigitos)
                     {
-                        cifra1 = sizeParte1 % 10;
-                        cifra2 = sizeParte1 / 10;
+                        cifra1 = contWords % 10;
+                        cifra2 = contWords / 10;
             
                        
                         //CIFRA 2
@@ -1478,9 +1268,9 @@ void button_buscar_TextView(GtkWidget *widget, CCPTextBuffer *stuff)
                 {
                     if(a == numDigitos)
                     {
-                        cifra3 = sizeParte1 / 100;
-                        cifra2 = (sizeParte1 - cifra3*100)/10;
-                        cifra1 = sizeParte1 % 10;
+                        cifra3 = contWords / 100;
+                        cifra2 = (contWords - cifra3*100)/10;
+                        cifra1 = contWords % 10;
         
         
                         //CIFRA 3
@@ -15781,6 +15571,25 @@ void button_add_TextView(GtkWidget *widget, CCPTextBuffer3 *stuff)
         wordsV[cont26] = '\0';
     
         int sizeWordsV = strlen(wordsV);
+        
+        
+        //Con esto contabilizamos las palabras que vamos a añadir
+        int contWords = 0;
+        
+        for(int i = 0; i <= sizeWordsV; i++)
+        {
+			if(wordsV[i] == ' ')
+			{
+				contWords++;
+			}
+			
+		}
+		
+		if(sizeText > 0)
+		{
+			contWords = contWords + 1;
+		}
+        
     
         
         //Para asegurarnos que se han introducido carácteres en el textview, sino se han introducido no se ejecutará el condiconal y mostrará un mensaje en el textview2
@@ -16065,266 +15874,38 @@ void button_add_TextView(GtkWidget *widget, CCPTextBuffer3 *stuff)
             }
             
   
-  
-            //PARA PASAR EL CONTENIDO DE UN ARRAY CHAR UNIDIMENSIONAL A UN ARRAY CHAR BIDIMENSIONAL, OSEA LOS CARACTERES DEL ARRAY UNIDIMENSIONAL
-            //FORMAN PALABRAS Y ESTAN DELIMITADAS POR UN ESPACIO EN BLANCO, CON ESE ESPACIO EN BLANCO NOS SERVIRÁ DE GUÍA PARA PASAR CADA PALABRA
-            //EN UNA POSICIÓN INDIVIDUAL DEL ARRAY BIDIMENSIONAL
-    
-            //Con esta sabremos cuantos espacios en blanco hay en el array palabras
-            char caracter = ' ';
-            int espacios = 0;
-	
-	
-			//Recorremos el array unidimensional y contabilizamos los espacios
-            for(int i = 0; i < sizeWordsV; i++)
-            {
-   
-                if (wordsV[i] == caracter)
-                {
-		
-                       espacios++;	
-                }
-		
-            }
-	
-    
-            int longitud = espacios + 1; 
-	
-            char words2[longitud][90];
-	
-	
-            //CONOCER CUANTAS LETRAS HAY HASTA EL ESPACIO
-            int a, i;
-            int contadorLetras = 0;
-            bool hayEspacios = false;
-            int contEspacios = 0;
-            int posicion = 0;
-            int contador = 1;
-            int nuevaPos = 0;
-	
-	
-            //Recorremos el array
-            for(a = 0; a < sizeWordsV; a++)
-            {
-                //Para saber el número de caracteres que hay hasta llegar al espacio en blanco
-                for(i = posicion; i < sizeWordsV; i++)
-                {
-			
-                    if(isspace(wordsV[posicion]) == 0)
-                    {   
-		
-                        if(isspace(wordsV[posicion]) == 0)
-                        {
-					
-                            if(hayEspacios == false)
-                            {
-      				
-                                posicion++;
-						
-                                contadorLetras++;
-	
-                            }
-
-                        }
-
-                    }
-
-
-                    //Para que el contador deje de sumar en caso de que encuetre un espacio
-                    if(isspace(wordsV[posicion]) != 0)
-                    {
-         
-                        hayEspacios = true;
-				
-                    }
-
-			
-			
-                }	
-		
-	
-                //Actualizamos a
-                if(contEspacios > 0)
-                {
-                    a = (a + contadorLetras);
-                }
-                else
-                {
-                    a = (a + contadorLetras+1);
-                }
-		
-		
-		
-                if(a > contadorLetras)
-                {
-     	
-                    int contadorPos = 0;
-                    int posicionActual = 0;
-			
-				
-                    for(int b = 0; b < contadorLetras; b++)
-                    {
-				  
-                        if(contEspacios > 0)
-                        {
-                            contadorPos = nuevaPos;
-						
-                            words2[contEspacios][b] = wordsV[nuevaPos];
-						
-                        }
-                        else
-                        {
-						
-                            words2[contEspacios][b] = wordsV[contadorPos];
-				
-                        }
-					
-				
-				
-                        nuevaPos++;
-                        contadorPos++;
-                        posicionActual++;
-                        contador++;
-				
-   			
-				
-                        if(contEspacios == 0)
-                        {
-					
-                            if(contador > contadorLetras)
-                            {
-       
-                                words2[contEspacios][b+1] = '\0';
-	
-                                contador = 0;
-                                contEspacios++;
-                                posicion = a;
-                                contadorLetras = 0;
-                                hayEspacios = false;
-					
-						
-                                if(contEspacios > 0)
-                                {
-                                    nuevaPos = a;
-						
-                                    posicionActual = a;
-		
-                                }
-					
-					
-                            }
-                        }
-                        else if(contEspacios > 0)
-                        {
-                            if(contador >= contadorLetras)
-                            {
-						
-                                words2[contEspacios][b+1] = '\0';
-						
-                                contador = 0;
-                                contEspacios++;
-                                posicion = a;
-                                contadorLetras = 0;
-                                hayEspacios = false;
-					
-					
-                                if(contEspacios > 0)
-                                {
-                                    nuevaPos = a;
-						
-                                    posicionActual = a;
-		
-                                }
-					
-                            }
-					
-                        }
-				
-                    }
-			
-                }
-		
-            }
-	
-	
-			//Para obtener la longitud del array bidimensional de la primera dimensión
-            int sizeParte1 = (sizeof((words2))/sizeof((words2[0])));
-	
-   
-    
-            //VERIFICAMOS LAS PALABRAS QUE METEMOS POR TEL TEXTVIEW PARA METERLO EN UN FICHERO Y COMPRABRLO CON EL OTRO FICHERO, ESAS PALABRAS VERIFICADAS APARECERAN
-            //EN EL TEXTVIEW DE LA PAGE 7
-            char wordsVerificado[5000];
-    
-            int sizeV = strlen(wordsV);
-            char espacio = ' ';
-    
-    
-			//Pasamos el contenido de un array a otro
-            for(int i= 0; i < sizeV; i++)
-            {
-                wordsVerificado[i] = wordsV[i];
-            }
-    
-    
-			//Añadimos al array salto de línea por cada espacio
-            for(int i = 0; i < sizeV; i++)
-            {
-                if(wordsVerificado[i] == espacio)
-                {
-                    wordsVerificado[i] = '\n';
-                }
-            }
-    
-    
-			//Indicamos que hay acaba el array
-            wordsVerificado[sizeV] = '\0';
-    
-            int sizeWordsVerificado = strlen(wordsVerificado);
-    
-    
-            //Lo pasamos el textfield de la page 7
-            gtk_text_buffer_set_text (stuff->textBuffer7, wordsVerificado, sizeWordsVerificado); 
-    
-    
-    
-            //MOSTRAMOS EL LABEL DE LAS PALABRAS QUE BUSCO POR PANTALLA el valor de sizeParte1
+            
+            
+            //MOSTRAMOS EL LABEL DE LAS PALABRAS QUE BUSCO POR PANTALLA el valor de contWords
             short numDigitos;
             char sizePalabrasQueBusco[5000];
             int contador1 = 0;
             short cifra1, cifra2, cifra3;
     
             
-            //En el caso de que no se ha escrito nada modificamos el valor de la variable
-            if(sizeText == 0)
-            {
-                sizeParte1 = 0;
-                
-            }
-            
     
-			//Calculamos el número de cifras de la variable sizeParte1
-            if (sizeParte1<10)
+			//Calculamos el número de cifras de la variable contWords
+            if (contWords<10)
             {
                 numDigitos = 1;
     
             }
-            else if (sizeParte1<100)
+            else if (contWords<100)
             {
                 numDigitos = 2;
       
             }
-            else if (sizeParte1<1000)
+            else if (contWords<1000)
             {
                 numDigitos = 3;
       
             }
-            else if (sizeParte1<10000)
+            else if (contWords<10000)
             {
                 numDigitos = 4;
      
             }
-            else if (sizeParte1 > 10000)
+            else if (contWords > 10000)
             {
                 //cout<<"Fuera de rango"<<endl;
             }
@@ -16336,52 +15917,52 @@ void button_add_TextView(GtkWidget *widget, CCPTextBuffer3 *stuff)
             {
                 if(numDigitos == 1)
                 {
-                    if(sizeParte1 == 0)
+                    if(contWords == 0)
                     {
                         sizePalabrasQueBusco[0] = '0';
       
                     }
-                    else if(sizeParte1 == 1)
+                    else if(contWords == 1)
                     {
                         sizePalabrasQueBusco[0] = '1';
       
                     }
-                    else if(sizeParte1 == 2)
+                    else if(contWords == 2)
                     {
                         sizePalabrasQueBusco[0] = '2';
       
                     }
-                    else if(sizeParte1 == 3)
+                    else if(contWords == 3)
                     {
                         sizePalabrasQueBusco[0] = '3';
         
                     }
-                    else if(sizeParte1 == 4)
+                    else if(contWords == 4)
                     {
                         sizePalabrasQueBusco[0] = '4';
        
                     }
-                    else if(sizeParte1 == 5)
+                    else if(contWords == 5)
                     {
                         sizePalabrasQueBusco[0] = '5';
           
                     }
-                    else if(sizeParte1 == 6)
+                    else if(contWords == 6)
                     {
                         sizePalabrasQueBusco[0] = '6';
         
                     }
-                    else if(sizeParte1 == 7)
+                    else if(contWords == 7)
                     {
                         sizePalabrasQueBusco[0] = '7';
          
                     }
-                    else if(sizeParte1 == 8)
+                    else if(contWords == 8)
                     {
                         sizePalabrasQueBusco[0] = '8';
         
                     }
-                    else if(sizeParte1 == 9)
+                    else if(contWords == 9)
                     {
                         sizePalabrasQueBusco[0] = '9';
          
@@ -16397,8 +15978,8 @@ void button_add_TextView(GtkWidget *widget, CCPTextBuffer3 *stuff)
            
                     if(a == numDigitos)
                     {
-                        cifra1 = sizeParte1 % 10;
-                        cifra2 = sizeParte1 / 10;
+                        cifra1 = contWords % 10;
+                        cifra2 = contWords / 10;
             
              
                 
@@ -16513,9 +16094,9 @@ void button_add_TextView(GtkWidget *widget, CCPTextBuffer3 *stuff)
                 {
                     if(a == numDigitos)
                     {
-                        cifra3 = sizeParte1 / 100;
-                        cifra2 = (sizeParte1 - cifra3*100)/10;
-                        cifra1 = sizeParte1 % 10;
+                        cifra3 = contWords / 100;
+                        cifra2 = (contWords - cifra3*100)/10;
+                        cifra1 = contWords % 10;
                 
             
                         //CIFRA 3
